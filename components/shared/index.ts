@@ -11,3 +11,4 @@ export { CheckboxFiltersGroup } from "./checkbox-filters-group";
 export { CountButton } from "./count-button";
 export { ProductCard } from "./product-card";
 export { ProductsGroupList } from "./products-group-list";
+export { SearchInput } from "./search-input";
