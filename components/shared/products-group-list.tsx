@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useRef } from "react";
-import { Title } from "./title";
-import { ProductCard } from "./product-card";
 import { cn } from "@/lib/utils";
-import { useIntersection } from "react-use";
+import React from "react";
 import { useCategoryStore } from "@/store/category";
+import { useIntersection } from "react-use";
+import { ProductCard } from "./product-card";
+import { Title } from "./title";
 
 interface Props {
   title: string;
@@ -17,21 +17,26 @@ interface Props {
 
 export const ProductsGroupList: React.FC<Props> = ({ title, items, categoryId, className, listClassName }) => {
   const setActiveCategoryId = useCategoryStore((state) => state.setActiveId);
-  const intersectionRef = useRef(null);
+  const intersectionRef = React.useRef<HTMLElement>(null!);
   const intersection = useIntersection(intersectionRef, {
-    threshold: 0.4,
+    // центральная полоса ~ середина экрана
+    root: null,
+    rootMargin: "-45% 0px -55% 0px",
+    threshold: [0, 0.25, 0.5, 0.75, 1],
   });
 
   React.useEffect(() => {
-    if (intersection?.isIntersecting) {
+    if (!intersection) return;
+    if (intersection.isIntersecting && intersection.intersectionRatio >= 0.5) {
       setActiveCategoryId(categoryId);
     }
-  }, [categoryId, intersection?.isIntersecting, setActiveCategoryId]);
+  }, [categoryId, intersection, setActiveCategoryId]);
+
   return (
-    <div className={className} id={title} ref={intersectionRef}>
+    <section className={`${className} scroll-mt-[100px]`} id={title} ref={intersectionRef}>
       <Title text={title} size="lg" className="font-extrabold mb-5" />
       <div className={cn("grid grid-cols-3 gap-5", listClassName)}>
-        {items.map((product, i) => (
+        {items.map((product) => (
           <ProductCard
             id={product.id}
             key={product.id}
@@ -42,6 +47,6 @@ export const ProductsGroupList: React.FC<Props> = ({ title, items, categoryId, c
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 };
