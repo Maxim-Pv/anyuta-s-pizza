@@ -8,7 +8,7 @@ interface Props {
   name: string;
   price?: number;
   loading?: boolean;
-  onSubmit?: VoidFunction;
+  onSubmit: () => void;
   className?: string;
 }
 
@@ -29,7 +29,14 @@ export const ChooseProductForm: React.FC<Props> = ({ name, imageUrl, price, onSu
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam deserunt similique repellat atque beatae corrupti!
         </p>
 
-        <Button loading={loading} onClick={() => onSubmit?.()} className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10">
+        <Button
+          loading={loading}
+          onClick={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
+          className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
+        >
           Добавить в корзину за {price} ₽
         </Button>
       </div>

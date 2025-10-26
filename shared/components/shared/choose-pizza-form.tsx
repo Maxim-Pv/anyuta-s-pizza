@@ -1,3 +1,5 @@
+"use client";
+
 import { PizzaSize, PizzaType, pizzaTypes } from "@/shared/constants";
 import { usePizzaOptions } from "@/shared/hooks/use-pizza-options";
 import { getPizzaDetails } from "@/shared/lib";
@@ -28,10 +30,10 @@ export const ChoosePizzaForm: React.FC<Props> = ({ name, items, imageUrl, ingred
   const { totalPrice, pizzaDetails } = getPizzaDetails(type, size, items, ingredients, selectedIngredients);
 
   const handleClickAdd = () => {
-    // if (currentItemId) {
-    //   onSubmit(currentItemId, Array.from(selectedIngredients));
-    // }
-    console.log("sizes: ", size, "type: ", type, "selectedIngredients: ", selectedIngredients);
+    if (currentItemId) {
+      onSubmit(currentItemId, Array.from(selectedIngredients));
+    }
+    // console.log("sizes: ", size, "type: ", type, "selectedIngredients: ", selectedIngredients);
   };
 
   return (

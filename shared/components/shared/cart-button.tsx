@@ -12,7 +12,9 @@ interface Props {
 }
 
 export const CartButton: React.FC<Props> = ({ className }) => {
-  const [totalAmount, items, loading] = useCartStore((state) => [state.totalAmount, state.items, state.loading]);
+  const totalAmount = useCartStore((s) => s.totalAmount);
+  const itemsCount = useCartStore((s) => s.items.length); // не весь массив!
+  const loading = useCartStore((s) => s.loading);
 
   return (
     <CartDrawer>
@@ -21,7 +23,7 @@ export const CartButton: React.FC<Props> = ({ className }) => {
         <span className="h-full w-[1px] bg-white/30 mx-3" />
         <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">
           <ShoppingCart size={16} className="relative" strokeWidth={2} />
-          <b>{items.length}</b>
+          <b>{itemsCount}</b>
         </div>
         <ArrowRight
           size={20}

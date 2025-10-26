@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
     const userCart = await findOrCreateCart(token);
 
     const data = (await req.json()) as CreateCartItemValues;
+    console.time("POST /api/cart");
 
     const findCartItem = await prisma.cartItem.findFirst({
       where: {
@@ -94,6 +95,9 @@ export async function POST(req: NextRequest) {
 
     const resp = NextResponse.json(updatedUserCart);
     resp.cookies.set("cartToken", token);
+
+    console.timeEnd("POST /api/cart");
+
     return resp;
   } catch (error) {
     console.log("[CART_POST] Server error", error);
