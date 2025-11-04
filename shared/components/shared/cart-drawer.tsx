@@ -39,7 +39,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren> = ({ children }) => {
 
           {!totalAmount && (
             <div className="flex flex-col items-center justify-center w-72 mx-auto">
-              <Image src="/assets/images/empty-box.png" alt="Empty cart" width={120} height={120} />
+              <Image src="/assets/images/empty-box.svg" alt="Empty cart" width={250} height={200} />
               <Title size="sm" text="Корзина пустая" className="text-center font-bold my-2" />
               <p className="text-center text-neutral-500 mb-5">Добавьте хотя бы одну пиццу, чтобы совершить заказ</p>
 
