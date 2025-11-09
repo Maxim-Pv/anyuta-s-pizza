@@ -7,9 +7,11 @@ import { CreateCartItemValues } from "../services/dto/cart.dto";
 export interface CartState {
   loading: boolean;
   error: boolean;
+  initializing?: boolean;
+  pendingById?: Set<number>;
+
   totalAmount: number;
   items: CartStateItem[];
-
   /* Получение товаров из корзины */
   fetchCartItems: () => Promise<void>;
   /* Запрос на обновление количества товара */
@@ -24,57 +26,89 @@ export const useCartStore = create<CartState>((set, get) => ({
   items: [],
   error: false,
   loading: true,
+  initializing: true,
+  pendingById: new Set<number>(),
   totalAmount: 0,
 
   fetchCartItems: async () => {
     try {
-      set({ loading: true, error: false });
+      set({ initializing: true, error: false });
       const data = await Api.cart.getCart();
-      set(getCartDetails(data));
+      set({ ...getCartDetails(data), initializing: false, loading: false });
     } catch (error) {
       console.error(error);
-      set({ error: true });
-    } finally {
-      set({ loading: false });
+      set({ error: true, initializing: false });
     }
   },
 
   updateItemQuantity: async (id: number, quantity: number) => {
+    const prevItems = get().items;
+    set((state) => ({
+      items: state.items.map((item) => (item.id === id ? { ...item, quantity } : item)),
+      pendingById: new Set(state.pendingById).add(id),
+      error: false,
+    }));
+
     try {
-      set({ loading: true, error: false });
       const data = await Api.cart.updateItemQuantity(id, quantity);
-      set(getCartDetails(data));
+      set((state) => ({
+        ...getCartDetails(data),
+        pendingById: (() => {
+          const next = new Set(state.pendingById);
+          next.delete(id);
+          return next;
+        })(),
+      }));
     } catch (error) {
       console.error(error);
-      set({ error: true });
-    } finally {
-      set({ loading: false });
+      set((state) => ({
+        items: prevItems,
+        error: true,
+        pendingById: (() => {
+          const next = new Set(state.pendingById);
+          next.delete(id);
+          return next;
+        })(),
+      }));
     }
   },
 
   removeCartItem: async (id: number) => {
+    const prevItems = get().items;
+    set((state) => ({
+      items: state.items.filter((item) => item.id !== id),
+      pendingById: new Set(state.pendingById).add(id),
+      error: false,
+    }));
+
     try {
-      set((state) => ({
-        loading: true,
-        error: false,
-        items: state.items.map((item) => (item.id === id ? { ...item, disabled: true } : item)),
-      }));
       const data = await Api.cart.removeCartItem(id);
+      set((state) => ({
+        ...getCartDetails(data),
+        pendingById: (() => {
+          const next = new Set(state.pendingById);
+          next.delete(id);
+          return next;
+        })(),
+      }));
       set(getCartDetails(data));
     } catch (error) {
       console.error(error);
-      set({ error: true });
-    } finally {
       set((state) => ({
-        loading: false,
-        items: state.items.map((item) => ({ ...item, disabled: false })),
+        items: prevItems,
+        error: true,
+        pendingById: (() => {
+          const next = new Set(state.pendingById);
+          next.delete(id);
+          return next;
+        })(),
       }));
     }
   },
 
   addCartItem: async (values: CreateCartItemValues) => {
     try {
-      set({ loading: true, error: false });
+      set({ error: false });
       const data = await Api.cart.addCartItem(values);
       set(getCartDetails(data));
     } catch (error) {

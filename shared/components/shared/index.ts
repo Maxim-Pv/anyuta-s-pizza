@@ -29,7 +29,7 @@ export { AdressInput } from "./address-input";
 // export { InfoBlock } from "./info-block";
 // export { ProfileForm } from "./profile-form";
 // export { Stories } from "./stories";
-// export * from "./email-temapltes";
+export * from "./email-temapltes";
 export * from "./checkout";
 export * from "./form";
 export * from "./modals";

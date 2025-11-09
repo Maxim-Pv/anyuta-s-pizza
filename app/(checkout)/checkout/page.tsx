@@ -1,5 +1,6 @@
 "use client";
 
+import { createOrder } from "@/app/actions";
 import { CheckoutAddressForm, CheckoutCart, CheckoutPersonalForm, CheckoutSidebar, Container, Title } from "@/shared/components";
 import { checkoutFormSchema, CheckoutFormValues } from "@/shared/constants";
 import { useCart } from "@/shared/hooks";
@@ -12,7 +13,7 @@ import toast from "react-hot-toast";
 
 export default function CheckoutPage() {
   const [submitting, setSubmitting] = React.useState(false);
-  const { totalAmount, updateItemQuantity, items, removeCartItem, loading } = useCart();
+  const { totalAmount, updateItemQuantity, items, removeCartItem, initializing, pendingById } = useCart();
   const { data: session } = useSession();
 
   const form = useForm<CheckoutFormValues>({
@@ -40,22 +41,23 @@ export default function CheckoutPage() {
     if (session) {
       fetchUserInfo();
     }
-  }, [session]);
+  }, [session, form]);
 
   const onSubmit = async (data: CheckoutFormValues) => {
     try {
       setSubmitting(true);
-      console.log(data, "данные заказа");
+      // console.log(data, "данные заказа");
 
-      //   const url = await createOrder(data);
+      const url = await createOrder(data);
+      console.log(url, "созданный заказ");
 
       toast.error("Заказ успешно оформлен! 📝 Переход на оплату... ", {
         icon: "✅",
       });
 
-      //   if (url) {
-      //     location.href = url;
-      //   }
+      if (url) {
+        location.href = String(url);
+      }
     } catch (err) {
       console.log(err);
       setSubmitting(false);
@@ -77,16 +79,22 @@ export default function CheckoutPage() {
           <div className="flex gap-10">
             {/* Левая часть */}
             <div className="flex flex-col gap-10 flex-1 mb-20">
-              <CheckoutCart onClickCountButton={onClickCountButton} removeCartItem={removeCartItem} items={items} loading={loading} />
+              <CheckoutCart
+                onClickCountButton={onClickCountButton}
+                removeCartItem={removeCartItem}
+                items={items}
+                loading={initializing}
+                pendingById={pendingById}
+              />
 
-              <CheckoutPersonalForm className={loading ? "opacity-40 pointer-events-none" : ""} />
+              <CheckoutPersonalForm className={submitting ? "opacity-40 pointer-events-none" : ""} />
 
-              <CheckoutAddressForm className={loading ? "opacity-40 pointer-events-none" : ""} />
+              <CheckoutAddressForm className={submitting ? "opacity-40 pointer-events-none" : ""} />
             </div>
 
             {/* Правая часть */}
             <div className="w-[450px]">
-              <CheckoutSidebar totalAmount={totalAmount} loading={loading || submitting} />
+              <CheckoutSidebar totalAmount={totalAmount} loading={submitting} />
             </div>
           </div>
         </form>

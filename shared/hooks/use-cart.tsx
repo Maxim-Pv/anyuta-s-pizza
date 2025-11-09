@@ -10,6 +10,8 @@ type ReturnProps = {
   updateItemQuantity: (id: number, quantity: number) => void;
   removeCartItem: (id: number) => void;
   addCartItem: (values: CreateCartItemValues) => void;
+  initializing?: boolean;
+  pendingById?: Set<number>;
 };
 
 export const useCart = (): ReturnProps => {
