@@ -1,7 +1,9 @@
 import React from "react";
-import { CreateCartItemValues } from "../services/dto/cart.dto";
+import { useShallow } from "zustand/react/shallow";
+
 import { CartStateItem } from "../lib/get-cart-details";
 import { useCartStore } from "../store";
+import { CreateCartItemValues } from "../services/dto/cart.dto";
 
 type ReturnProps = {
   totalAmount: number;
@@ -15,10 +17,22 @@ type ReturnProps = {
 };
 
 export const useCart = (): ReturnProps => {
-  const cartState = useCartStore((state) => state);
+  const cartState = useCartStore(
+    useShallow((state) => ({
+      totalAmount: state.totalAmount,
+      items: state.items,
+      loading: state.loading,
+      updateItemQuantity: state.updateItemQuantity,
+      removeCartItem: state.removeCartItem,
+      addCartItem: state.addCartItem,
+      initializing: state.initializing,
+      pendingById: state.pendingById,
+    }))
+  );
 
   React.useEffect(() => {
-    cartState.fetchCartItems();
+    // Вызываем получение корзины один раз при монтировании
+    useCartStore.getState().fetchCartItems();
   }, []);
 
   return cartState;

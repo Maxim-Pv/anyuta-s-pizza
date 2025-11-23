@@ -51,6 +51,9 @@ export async function createOrder(data: CheckoutFormValues): Promise<string | un
     }
 
     /* Создаем заказ */
+    // Приводим корзину к JSON-совместимому виду (без Date) для сохранения в JSON-колонке
+    const orderItems = JSON.parse(JSON.stringify(userCart.items)) as Prisma.InputJsonValue;
+
     const order = await prisma.order.create({
       data: {
         token: cartToken,
@@ -61,7 +64,7 @@ export async function createOrder(data: CheckoutFormValues): Promise<string | un
         comment: data.comment,
         totalAmount: userCart.totalAmount,
         status: OrderStatus.PENDING,
-        items: JSON.stringify(userCart.items),
+        items: orderItems,
       },
     });
 

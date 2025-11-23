@@ -108,7 +108,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   addCartItem: async (values: CreateCartItemValues) => {
     try {
-      set({ error: false });
+      set({ error: false, loading: true });
       const data = await Api.cart.addCartItem(values);
       set(getCartDetails(data));
     } catch (error) {

@@ -8,6 +8,8 @@ interface Props {
 }
 
 export async function createPayment(details: Props) {
+  // console.log(process.env.YOOKASSA_STORE_ID, "ID МАГАЗИНА", process.env.YOOKASSA_API_KEY, "КЛЮЧ АПИ");
+
   const { data } = await axios.post<PaymentData>(
     "https://api.yookassa.ru/v3/payments",
     {
@@ -26,10 +28,10 @@ export async function createPayment(details: Props) {
       },
     },
     {
-      //   auth: {
-      //     username: process.env.YOOKASSA_STORE_ID as string,
-      //     password: process.env.YOOKASSA_API_KEY as string,
-      //   },
+      auth: {
+        username: process.env.YOOKASSA_STORE_ID as string,
+        password: process.env.YOOKASSA_API_KEY as string,
+      },
       headers: {
         "Content-Type": "application/json",
         "Idempotence-Key": Math.random().toString(36).substring(7),
