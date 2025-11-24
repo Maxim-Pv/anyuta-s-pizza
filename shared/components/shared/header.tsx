@@ -4,14 +4,14 @@ import Image from "next/image";
 import React from "react";
 
 import { cn } from "@/shared/lib/utils";
-import { User } from "lucide-react";
 import Link from "next/link";
-import { Button } from "../ui";
-import { CartButton } from "./cart-button";
-import { Container } from "./container";
-import { SearchInput } from "./search-input";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import { CartButton } from "./cart-button";
+import { Container } from "./container";
+import { AuthModal } from "./modals";
+import { ProfileButton } from "./profile-button";
+import { SearchInput } from "./search-input";
 
 interface Props {
   className?: string;
@@ -65,11 +65,11 @@ export const Header: React.FC<Props> = ({ hasSearch = true, hasCart = true, clas
           </div>
         )}
 
+        {/* Правая часть */}
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="flex items-center gap-1">
-            <User size={16} />
-            Войти
-          </Button>
+          <AuthModal open={openAuthModal} onClose={() => setOpenAuthModal(false)} />
+
+          <ProfileButton onClickSignIn={() => setOpenAuthModal(true)} />
 
           {hasCart && <CartButton />}
         </div>
