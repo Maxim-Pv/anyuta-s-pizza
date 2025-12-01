@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
     const includeCart = {
       items: {
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: "desc" as const },
         include: {
           productItem: {
             include: { product: true },
@@ -82,9 +82,9 @@ export async function POST(req: NextRequest) {
         include: { ingredients: { select: { id: true } } },
       });
 
-      const normalizeIds = (arr: Array<{ id: number }> | number[]) => {
+      const normalizeIds = (arr: Array<{ id: number } | number>) => {
         const ids = Array.isArray(arr) ? arr : [];
-        return new Set(ids.map((item: any) => (typeof item === "number" ? item : item.id)));
+        return new Set(ids.map((item) => (typeof item === "number" ? item : item.id)));
       };
 
       const desired = normalizeIds(ingredientsIds);
