@@ -5,7 +5,7 @@ import { PayOrderTemplate } from "@/shared/components";
 import { VerificationUserTemplate } from "@/shared/components/shared/email-temapltes/verification-user";
 import { CheckoutFormValues } from "@/shared/constants";
 import { createPayment, sendEmail } from "@/shared/lib";
-// import { getUserSession } from "@/shared/lib/get-user-session";
+import { getUserSession } from "@/shared/lib/get-user-session";
 import { OrderStatus, Prisma } from "@prisma/client";
 import { hashSync } from "bcrypt";
 import { cookies } from "next/headers";
@@ -185,9 +185,7 @@ export async function registerUser(body: Prisma.UserCreateInput) {
     await sendEmail(
       createdUser.email,
       "Next Pizza / 📝 Подтверждение регистрации",
-      VerificationUserTemplate({
-        code,
-      })
+      createElement(VerificationUserTemplate, { code })
     );
   } catch (err) {
     console.log("Error [CREATE_USER]", err);

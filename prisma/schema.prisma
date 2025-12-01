@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
     provider = "postgresql"
-    url      = env("DATABASE_URL")
+    url      = env("POSTGRES_URL")
 }
 
 model User {
@@ -146,25 +146,25 @@ model VerificationCode {
     @@unique([userId, code])
 }
 
-// model Story {
-//     id              Int    @id @default(autoincrement())
-//     previewImageUrl String
+model Story {
+    id              Int    @id @default(autoincrement())
+    previewImageUrl String
 
-//     items StoryItem[]
+    items StoryItem[]
 
-//     createdAt DateTime @default(now())
-// }
+    createdAt DateTime @default(now())
+}
 
-// model StoryItem {
-//     id Int @id @default(autoincrement())
+model StoryItem {
+    id Int @id @default(autoincrement())
 
-//     storyId Int
-//     story   Story @relation(fields: [storyId], references: [id])
+    storyId Int
+    story   Story @relation(fields: [storyId], references: [id])
 
-//     sourceUrl String
+    sourceUrl String
 
-//     createdAt DateTime @default(now())
-// }
+    createdAt DateTime @default(now())
+}
 
 enum OrderStatus {
     PENDING
